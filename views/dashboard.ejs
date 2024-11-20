@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Blog Dashboard</title>
+</head>
+<body>
+  <header>
+    <h1>Welcome, <%= user.name %> (<%= user.email %>)</h1>
+  </header>
+  <main>
+    <!-- Blog Management Section -->
+    <section id="blogs">
+      <h2>Blog Management</h2>
+
+      <!-- Create Blog Form -->
+      <form id="create-blog-form" action="/api/blogs" method="POST">
+        <h3>Create New Blog</h3>
+        <label for="blog-title">Title:</label>
+        <input type="text" id="blog-title" name="title" required>
+        
+        <label for="blog-content">Content:</label>
+        <textarea id="blog-content" name="content" required></textarea>
+
+        <label for="blog-tags">Tags (comma-separated):</label>
+        <input type="text" id="blog-tags" name="tags">
+
+        <button type="submit">Create Blog</button>
+      </form>
+
+      <!-- Blog List -->
+      <div id="blog-list">
+        <h3>All Blogs</h3>
+        <% blogs.forEach((blog) => { %>
+          <div class="blog-item">
+            <h4><%= blog.title %></h4>
+            <p><%= blog.content %></p>
+            <p><strong>Tags:</strong> <%= blog.tags.join(', ') %></p>
+            <p><strong>Author:</strong> <%= blog.author.name %></p>
+            <p><strong>Comments:</strong> <%= blog.commentsCount %></p>
+
+            <!-- Update Blog Form -->
+            <form class="update-blog-form" action="/api/blogs/<%= blog._id %>" method="POST">
+              <h5>Update Blog</h5>
+              <label for="title">Title:</label>
+              <input type="text" name="title" value="<%= blog.title %>" required>
+              
+              <label for="content">Content:</label>
+              <textarea name="content" required><%= blog.content %></textarea>
+
+              <label for="tags">Tags (comma-separated):</label>
+              <input type="text" name="tags" value="<%= blog.tags.join(', ') %>">
+
+              <button type="submit">Update Blog</button>
+            </form>
+
+            <!-- Delete Blog Button -->
+            <form action="/api/blogs/<%= blog._id %>" method="POST">
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="submit">Delete Blog</button>
+            </form>
+          </div>
+        <% }); %>
+      </div>
+    </section>
+
+    <section id="comments">
+      <h2>Comment Management</h2>
+
+      <form id="add-comment-form" action="/api/comments" method="POST">
+        <h3>Add Comment</h3>
+        <label for="comment-blog-id">Blog ID:</label>
+        <input type="text" id="comment-blog-id" name="blogPostId" required>
+        
+        <label for="comment-content">Comment:</label>
+        <textarea id="comment-content" name="content" required></textarea>
+
+        <button type="submit">Add Comment</button>
+      </form>
+
+      <div id="comment-list">
+        <h3>Comments for Blog</h3>
+        <% comments.forEach((comment) => { %>
+          <div class="comment-item">
+            <p><%= comment.content %></p>
+            <p><strong>Author:</strong> <%= comment.author.name %></p>
+            <p><strong>Posted on:</strong> <%= new Date(comment.createdAt).toLocaleString() %></p>
+          </div>
+        <% }); %>
+      </div>
+    </section>
+
+    <section id="logout">
+      <form action="/logout" method="POST">
+        <button type="submit">Logout</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
